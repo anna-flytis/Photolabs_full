@@ -1,4 +1,4 @@
-.photo-list-item {
+.photo-list--item {
   margin: 24px;
   padding: 8px;
   border-width: 1px;
@@ -24,7 +24,6 @@
   margin-right: 8px;
   width: 40px;
   height: 40px;
-
 }
 
 .photo-list--user-details {
@@ -36,8 +35,14 @@
   font-weight: 700;
   font-size: 12px;
   margin-left: 8px;
+  p {
+    margin: 0;
+  }
 }
 
 .photo-list--user-location {
   color: #696767;
+  font-weight: 400;
 }
+
+
