@@ -38,11 +38,9 @@ export const PhotoDetailsModal = (props) => {
         </div>
       </div>
 
-      <div className="divider"></div>
-
       <section className='photo-details-modal--images'>
         <h1 className='photo-details-modal--header'>Similar photos:</h1>
-        <PhotoList photos={photos} favouritedPhotos={favouritedPhotos} setFavouritedPhotos={setFavouritedPhotos} />
+        <PhotoList photos={selectPhoto.similar_photos} favouritedPhotos={favouritedPhotos} setFavouritedPhotos={setFavouritedPhotos} />
       </section>
 
     </div>
