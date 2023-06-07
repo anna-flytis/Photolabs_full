@@ -1,46 +1,57 @@
-import React, {useState} from 'react';
+import { useReducer } from 'react';
 
-function useApplicationData() {
 
-  const [likedPhotos, setLikedPhotos] = useState([]);
-  const [favPhotoExist, setFavPhotoExist] = useState(false);
-  const [modalState, setModalState] = useState(false);
-  const [clickedImgID, setClickedImgID] = useState("");
 
-  const like = (id) => {
-    let newArr;
-    if (likedPhotos.includes(id)) {
-      newArr = likedPhotos.filter(p => p !== id);
-    } else {
-      newArr = [...likedPhotos, id];
-    }
-    setLikedPhotos(newArr);
-    setFavPhotoExist(newArr.length > 0 ? true : false);
-  };
-
-  const toggleModalState = () => {
-    setModalState(true);
-  }
-
-  const closeModal = () => {
-    setModalState(false);
-  }
-
-  const clickImgSetID = (id) => {
-    setClickedImgID(id);
-  }
-
-  const object = {
-    favPhotoExist,
-    like,
-    toggleModalState,
-    modalState,
-    closeModal,
-    clickImgSetID,
-    clickedImgID
-  }
-
-  return object;
+const reducer = (state, action) => {
+switch (action.type) {
+case 'SET_FAVOURITED_PHOTOS':
+return {
+...state,
+favouritedPhotos: action.payload
+};
+case 'SET_SELECT_PHOTO':
+return {
+...state,
+selectPhoto: action.payload
+};
+case 'SET_MODAL':
+return {
+...state,
+modal: action.payload
+};
+default:
+return state;
 }
+};
+
+const useApplicationData = () => {
+  const initialState = {
+    favouritedPhotos: [],
+    selectPhoto: {},
+    modal: false
+    };
+
+const [state, dispatch] = useReducer(reducer, initialState);
+
+const openModal = (photo) => {
+dispatch({ type: 'SET_SELECT_PHOTO', payload: photo });
+dispatch({ type: 'SET_MODAL', payload: true });
+};
+
+const closeModal = () => {
+dispatch({ type: 'SET_SELECT_PHOTO', payload: null });
+dispatch({ type: 'SET_MODAL', payload: false });
+};
+
+return {
+modal: state.modal,
+openModal,
+closeModal,
+selectPhoto: state.selectPhoto,
+favouritedPhotos: state.favouritedPhotos,
+setFavouritedPhotos: (favouritedPhotos) =>
+dispatch({ type: 'SET_FAVOURITED_PHOTOS', payload: favouritedPhotos })
+};
+};
 
 export default useApplicationData;
