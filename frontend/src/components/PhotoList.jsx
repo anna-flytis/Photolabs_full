@@ -1,59 +1,31 @@
 import React from 'react';
-
-import PhotoListItem from './PhotoListItem';
-import PhotoData from '../mocks/photos.json';
-
 import '../styles/PhotoList.scss';
+import PhotoListItem from './PhotoListItem';
 
 const PhotoList = (props) => {
+  const { photos, favouritedPhotos, setFavouritedPhotos, openModal } = props;
 
-  const { photos, like, toggleModalState, clickImgSetID } = props;
-
-  const mappedPhotos = photos.map(photo => {
-    return (
-      <PhotoListItem username={photo.user.name}
-        imageSource={photo.urls.regular}
-        key={photo.id}
-        id={photo.id}
-        like={like}
-        toggleModalState={toggleModalState}
-        clickImgSetID={clickImgSetID}
-        hideUserName={photo.hideUserName}
-        city={photo.location.city}
-        country={photo.location.country}
-        profile={photo.user.profile} />
-    );
+  const photoComponents = photos.map(photo => {
+    return <PhotoListItem
+      key={photo.id}
+      id={photo.id}
+      username={photo.user.name}
+      imageSource={photo.urls.regular}
+      hideUserName={false}
+      city={photo.location.city}
+      country={photo.location.country}
+      userProfileImage={photo.user.profile}
+      favouritedPhotos={favouritedPhotos}
+      setFavouritedPhotos={setFavouritedPhotos}
+      openModal={openModal}
+    />
   });
 
   return (
-    <ul className="photo-list">
-      {mappedPhotos}
-    </ul>
-
+  <ul className="photo-list">
+    {photoComponents}
+  </ul>
   );
 };
 
-PhotoList.defaultProps = {
-  photos: [
-    {
-      username: 'Jacob',
-      imageSource: `${process.env.PUBLIC_URL}/Image.jpg`,
-      id: 1,
-      hideUserName: false,
-    },
-    {
-      username: 'Jacob',
-      imageSource: `${process.env.PUBLIC_URL}/Image.jpg`,
-      id: 2,
-      hideUserName: false,
-    },
-    {
-      username: 'Jacob',
-      imageSource: `${process.env.PUBLIC_URL}/Image.jpg`,
-      id: 3,
-      hideUserName: false,
-    }
-  ]
-};
-
-export default PhotoList;
+export default PhotoList

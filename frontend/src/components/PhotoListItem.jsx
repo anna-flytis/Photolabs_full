@@ -1,40 +1,43 @@
 import React from 'react';
-
 import PhotoFavButton from './PhotoFavButton';
 import '../styles/PhotoListItem.scss';
 
 const PhotoListItem = (props) => {
-  const { username, imageSource, id, like, toggleModalState, clickImgSetID, hideUserName, city, country, profile } = props;
+  const { id, username, city, country, imageSource, hideUserName, userProfileImage, favouritedPhotos, setFavouritedPhotos, openModal } = props;
 
-  const clickHandler = () => {
-    toggleModalState();
-    clickImgSetID(id);
+  const handleClick = () => {
+    openModal({id, username, city, country, imageSource});
   };
-  
+
   return (
-    <div className="photo-list-item">
-      <PhotoFavButton like={like} photo_id={id} />
-      <img className="photo-list--image"
-        src={imageSource}
-        onClick={clickHandler} />
+    <article className='photo-list--item' onClick={handleClick}>
+      <PhotoFavButton
+        favouritedPhotos={favouritedPhotos}
+        setFavouritedPhotos={setFavouritedPhotos}
+        id={id}
+      />
+
+      <img src={imageSource} className='photo-list--image' />
+
       <div className='photo-list--user-details'>
-        <img className="photo-list--user-profile" src={profile} />
+        <img src={userProfileImage} alt="" className='photo-list--user-profile' />
         <div className='photo-list--user-info'>
-          {!hideUserName && <span>{username}</span>}
-          <div className="photo-list--user-location">
-            {city}, {country}
-          </div>
+          {!hideUserName && <p>{username}</p>}
+          <p className='photo-list--user-location'>{city}, {country}</p>
         </div>
       </div>
-    </div>
+
+    </article>
+
   );
 };
 
 PhotoListItem.defaultProps = {
   username: 'Jacob',
+  location: 'city, country',
   imageSource: `${process.env.PUBLIC_URL}/Image.jpg`,
   id: 1,
   hideUserName: false,
-};
+}
 
-export default PhotoListItem;
+export default PhotoListItem
