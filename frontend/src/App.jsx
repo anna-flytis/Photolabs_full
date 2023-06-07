@@ -1,80 +1,95 @@
-import React, { useState, useEffect } from 'react';
-import './App.scss';
-import HomeRoute from './routes/HomeRoute';
-import PhotoDetailsModal from './routes/PhotoDetailsModal';
-import useApplicationData from './hooks/useApplicationData';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import './App.scss';
+import useApplicationData from './hooks/useApplicationData';
+import HomeRoute from './routes/HomeRoute';
+import PhotoDetailsModal from './routes/PhotoDetailsModal'
 
-// Note: Rendering a single component to build components in isolation
+
 const App = () => {
-
-  const [topics, setTopics] = useState([]);
-  const [photos, setPhotos] = useState([]);
-  const [selectedTopic, setSelectedTopic] = useState(null);
-
   const {
-    favPhotoExist,
-    like,
-    toggleModalState,
-    modalState,
+    modal,
+    openModal,
     closeModal,
-    clickImgSetID,
-    clickedImgID
-  } = useApplicationData();
+    selectPhoto,
+    favouritedPhotos,
+    setFavouritedPhotos } = useApplicationData();
+
+  const [photos, setPhotos] = useState([]);
+  const [topics, setTopics] = useState([])
 
   useEffect(() => {
-    axios.get('http://localhost:8001/api/photos')
-      .then(res => {
-        setPhotos(res.data);
+    axios({
+      url: "http://localhost:8001/api/photos",
+      method: "GET",
+      dataResponse: "json"
+    })
+      .then((res) => {
+        setPhotos(prev => res.data)
       })
-      .catch(err => console.log(err));
-
-    axios.get('http://localhost:8001/api/topics')
-      .then(res => {
-        setTopics(res.data);
-      })
-      .catch(err => console.log(err));
-
+      .catch((error) => {
+        console.error('Error fetching photos:', error);
+      });
   }, []);
 
-  const selectTopic = (id) => {
-    setSelectedTopic(id);
+  useEffect(() => {
+    axios({
+      url: "http://localhost:8001/api/topics",
+      method: "GET",
+      dataResponse: "json"
+    })
+      .then((res) => {
+        setTopics(prev => res.data)
+      })
+      .catch((error) => {
+        console.error('Error fetching photos by topic:', error);
+      });
+  }, []);
+
+  const handleTopicClick = (topicId) => {
+    axios
+      .get(`http://localhost:8001/api/topics/photos/${topicId}`)
+      .then((res) => {
+        setPhotos(prev => res.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching photos by topic:', error);
+      });
   };
 
-  useEffect(() => {
-      if (!selectedTopic) {
-        axios.get('http://localhost:8001/api/photos')
-          .then(res => {
-            setPhotos([...res.data]);
-          })
-          .catch(err => console.log(err));
-      } else {
-        axios.get(`http://localhost:8001/api/topics/photos/${selectedTopic}`)
-          .then(res => {
-            setPhotos(res.data);
-          })
-          .catch(err => console.log(err));
-      }
-  }, [selectedTopic]);
+  const handleHomepageClick = () => {
+    axios({
+      url: "http://localhost:8001/api/photos",
+      method: "GET",
+      dataResponse: "json"
+    })
+      .then((res) => {
+        setPhotos(prev => res.data)
+      })
+      .catch((error) => {
+        console.error('Error fetching photos', error);
+      });
+  };
 
   return (
-    <div className="App">
+    <div>
       <HomeRoute
-        favPhotoExist={favPhotoExist}
-        like={like}
-        toggleModalState={toggleModalState}
-        PhotoData={photos}
-        clickImgSetID={clickImgSetID}
-        TopicData={topics}
-        selectTopic={selectTopic} />
-      {modalState && <PhotoDetailsModal closeModal={closeModal}
-        PhotoData={photos}
-        like={like}
-        toggleModalState={toggleModalState}
-        clickedImgID={clickedImgID}
-        clickImgSetID />}
+        photos={photos}
+        topics={topics}
+        openModal={openModal}
+        favouritedPhotos={favouritedPhotos} setFavouritedPhotos={setFavouritedPhotos}
+        handleTopicClick={handleTopicClick}
+        handleHomepageClick={handleHomepageClick} />
+
+      {modal &&
+        <PhotoDetailsModal
+          closeModal={closeModal}
+          selectPhoto={selectPhoto}
+          photos={photos}
+          favouritedPhotos={favouritedPhotos} setFavouritedPhotos={setFavouritedPhotos}
+        />}
     </div>
   );
 };
 
-export default App;
+export default App
